@@ -246,7 +246,11 @@ Use Python (as a calculator) to solve the following two problems:
 2. Suppose the cover price of a book is $\$ 24.95$, but bookstores get a $40\%$ discount. Shipping costs $\$3$ for the first copy and $75$ cents for each additional copy. What is the total wholesale cost for $60$ copies? Compare your answer with the solution up to 2 decimal numbers.
 
 ```{code-cell} ipython3
+V = (4/3)*3.14159*((6.65/2)**3)
+print(V)
 
+cost_w=(24.95*.6)*60+3+(.75*59)
+print(cost_w)
 ```
 
 To reveal the answers, highlight the following line of text using the mouse:
@@ -299,7 +303,8 @@ y = 4.5
 Print the values of the variables `x` and `y`.
 
 ```{code-cell} ipython3
-
+print(x)
+print(y)
 ```
 
 Let's do some arithmetic operations with our new variables:
@@ -580,6 +585,11 @@ Throughout this course module, you will be drawing from the following references
 ```{code-cell} ipython3
 V = 12.5*11*14
 print('1.a. V = {} in^3'.format(V))
+
+rho = 31/V
+print('1.b. rho = {} lb/in^3'.format(rho))
+
+print('1.c. {}'.format(V>1000))
 ```
 
 2. Use the variables given below, `str1` and `str2`, and check the following 
@@ -595,6 +605,15 @@ print('1.a. V = {} in^3'.format(V))
 ```{code-cell} ipython3
 str1 = 'Python'
 str2 = 'python'
+
+print('2.a. {}'.format(str1<str2))
+
+print('2.b. {}'.format(str1==str2))
+
+print('2.c. {}'.format(str1>str2))
+
+str1=str1.lower()
+print('2.d. {}'.format(str1==str2))
 ```
 
 3. The following code has an error, fix the error so that the correct result is returned:
@@ -612,7 +631,13 @@ else:
 ```
 
 ```{code-cell} ipython3
+x=1
+y=20
 
+if x<y and y==20:
+    print('y is 20 and x is less than y')
+else:
+    print('x is not less than y')
 ```
 
 4. Create a script that takes the clock hour in 24 hours and prints the clock hour with am or pm. 

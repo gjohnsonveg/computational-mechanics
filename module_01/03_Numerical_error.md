@@ -4,10 +4,10 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
-    format_version: 0.12
-    jupytext_version: 1.6.0
+    format_version: 0.13
+    jupytext_version: 1.11.4
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -96,6 +96,8 @@ def v_analytical(t,m,g,c):
     v_terminal=np.sqrt(m*g/c)
     v= v_terminal*np.tanh(g*t/v_terminal)
     return v
+
+print('v_analytical = {} m/s'.format(v_analytical(1,m,g,c)))
 ```
 
 Inside the curly brackets—the placeholders for the values you want to
@@ -639,7 +641,6 @@ print('years=',year)
 print('population =', pop)
 ```
 
-
 ```{code-cell} ipython3
 print('average population changes 1900-1950, 1950-2000, 2000-2020')
 print((pop[1:] - pop[0:-1])/(year[1:] - year[0:-1]))
@@ -648,7 +649,6 @@ print(np.mean((pop[1:] - pop[0:-1])/(year[1:] - year[0:-1])))
 ```
 
 __d.__ As the number of time steps increases, the Euler approximation approaches the analytical solution, not the measured data. The best-case scenario is that the Euler solution is the same as the analytical solution.
-
 
 +++
 
