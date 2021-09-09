@@ -890,28 +890,21 @@ def sincos(x):
     sinx: sine of input array
     cosx: cosine of input array'''
     
-    sin_input = np.sin(x)
-    cos_input = np.cos(x)
-    
-    return sin_input, cos_input
-```
+    return np.sin(x), np.cos(x)
 
-```{code-cell} ipython3
-x_1 = np.arange(0, np.pi, 0.05)
-sincos(x_1)
-```
+sincos(0)
 
-```{code-cell} ipython3
+pi_array = np.arange(0, (2*np.pi), (np.pi/16))
+
+sines, cosines = sincos(pi_array)
+
 plt.rcParams.update({'font.size': 22})
 plt.rcParams['lines.linewidth'] = 3
-```
 
-```{code-cell} ipython3
-sincos(x_1)
 #Plot sinx
-plt.plot(x_1, sin_input, color='red', linestyle='-', label='sin(x)')
+plt.plot(pi_array, sines, color='red', linestyle='-', label='sin(x)')
 #Plot cosx
-plt.plot(x_1, cos_input, color='green', linestyle='-', label='cos(x)')
+plt.plot(pi_array, cosines, color='green', linestyle='-', label='cos(x)')
 #Plot the legends in the best location
 plt.legend(loc='best');
 ```
