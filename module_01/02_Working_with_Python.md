@@ -887,8 +887,8 @@ def sincos(x):
     
     Returns
     -------
-    sinx: sine of input array
-    cosx: cosine of input array'''
+    np.sinx: sine of input array
+    np.cosx: cosine of input array'''
     
     return np.sin(x), np.cos(x)
 

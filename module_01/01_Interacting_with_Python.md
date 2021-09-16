@@ -653,5 +653,13 @@ elif time < 12:
 ```
 
 ```{code-cell} ipython3
+time = 22
+if time > 12:
+    print(time - 12, 'PM')
+else:
+    print(time, 'AM')
+```
+
+```{code-cell} ipython3
 
 ```

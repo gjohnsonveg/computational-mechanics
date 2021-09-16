@@ -223,6 +223,12 @@ plt.rcParams['lines.linewidth'] = 3
 ```
 
 ```{code-cell} ipython3
+t=np.linspace(0,12,7)
+
+v_numerical=np.zeros(len(t));
+for i in range(1,len(t)):
+    v_numerical[i]=v_numerical[i-1]+((g-c/m*v_numerical[i-1]**2))*2;
+
 plt.plot(t,v_analytical(t,m,g,c),'-',label='analytical')
 plt.plot(t,v_numerical,'o-',label='numerical')
 plt.legend()
@@ -241,7 +247,39 @@ If you increase the number of time steps from 0 to 12 seconds what happens to v_
 What happens when you decrease the number of time steps?
 
 ```{code-cell} ipython3
+#double the number of steps
+t=np.linspace(0,12,14)
 
+v_numerical=np.zeros(len(t));
+for i in range(1,len(t)):
+    v_numerical[i]=v_numerical[i-1]+((g-c/m*v_numerical[i-1]**2))*2;    
+    
+plt.rcParams.update({'font.size': 22})
+plt.rcParams['lines.linewidth'] = 3
+
+plt.plot(t,v_analytical(t,m,g,c),'-',label='analytical')
+plt.plot(t,v_numerical,'o-',label='numerical')
+plt.legend()
+plt.xlabel('time (s)')
+plt.ylabel('velocity (m/s)')
+```
+
+```{code-cell} ipython3
+#fewer steps
+t=np.linspace(0,12,5)
+
+v_numerical=np.zeros(len(t));
+for i in range(1,len(t)):
+    v_numerical[i]=v_numerical[i-1]+((g-c/m*v_numerical[i-1]**2))*2; 
+    
+plt.rcParams.update({'font.size': 22})
+plt.rcParams['lines.linewidth'] = 3
+
+plt.plot(t,v_analytical(t,m,g,c),'-',label='analytical')
+plt.plot(t,v_numerical,'o-',label='numerical')
+plt.legend()
+plt.xlabel('time (s)')
+plt.ylabel('velocity (m/s)')
 ```
 
 ## Errors in Numerical Modeling
@@ -417,7 +455,14 @@ print(N/2,'*eps=',(s2-1))
 
 2. What is machine epsilon for a 32-bit floating point number?
 
-+++
+```{code-cell} ipython3
+s3=1+(2*eps)
+
+print('1. summation 1+2eps =',(s3))
+
+eps=np.finfo('float32').eps
+print('2. eps for 32-bit =',eps)
+```
 
 ## Freefall Model (revisited)
 
@@ -469,8 +514,8 @@ Here, consider the speed from 0 to 2 seconds, so `N=3` means $\Delta t$= 1 s and
 |3 | 1 s|
 |21| 0.1 s|
 |201| 0.01 s|
-|??| 0.05 s|
-|?? | 0.001 s|
+|41| 0.05 s|
+|2001 | 0.001 s|
 
 What is N for 0.05 s and 0.001 s in the table above?
 
@@ -518,7 +563,7 @@ First, solve for `n=2` steps, so t=[0,2]. We can time the solution to get a sens
 
 ```{code-cell} ipython3
 %%time
-n=5
+n=15
 
 v_analytical,v_numerical,t=freefall(n);
 ```
@@ -644,8 +689,40 @@ print('population =', pop)
 ```{code-cell} ipython3
 print('average population changes 1900-1950, 1950-2000, 2000-2020')
 print((pop[1:] - pop[0:-1])/(year[1:] - year[0:-1]))
-print('average growth of 1900 - 2020')
+print('average growth rate of 1900 - 2020')
 print(np.mean((pop[1:] - pop[0:-1])/(year[1:] - year[0:-1])))
+print('average growth rate of 1900 - 1950')
+print(np.mean((pop[1]-pop[0])/(year[1]-year[0])))
+print('average growth rate of 1950 - 2000')
+print(np.mean((pop[2]-pop[1])/(year[2]-year[1])))
+print('average growth rate of 2000 - 2020')
+print(np.mean((pop[3]-pop[2])/(year[3]-year[2])))
+```
+
+```{code-cell} ipython3
+#p_numerical calculation
+n=7
+t = np.linspace(1900,2021,n)
+dt=t[1]-t[0]
+p_numerical=np.zeros(len(t))
+p_numerical[0]=pop[0]
+k_g=0.013
+for i in range(len(t)-1):
+    p_numerical[i+1]=p_numerical[i]+k_g*p_numerical[i]*dt
+    
+#p_analytical calculation
+p_analytical=np.zeros(len(t))
+p_analytical[0]=pop[0]
+for i in range(len(t)):
+    p_analytical[i] = 1.6e9*np.exp(k_g*(t[i]-1900))
+    
+
+plt.plot(t,p_numerical,'o',label=str(n)+' Euler steps')
+plt.plot(t,p_analytical,label='analytical')
+plt.title('Population from 1900-2020')
+plt.xlabel('year')
+plt.ylabel('population')
+plt.legend()
 ```
 
 __d.__ As the number of time steps increases, the Euler approximation approaches the analytical solution, not the measured data. The best-case scenario is that the Euler solution is the same as the analytical solution.
@@ -679,6 +756,44 @@ def exptaylor(x,n):
             ex+=x**(i+1)/factorial(i+1) # add the nth-order result for each step in loop
         return ex
         
+```
+
+```{code-cell} ipython3
+print(exptaylor(1,2))
+print(np.exp(1))
+print('relative error is:', ((exptaylor(1,2)-np.exp(1))/np.exp(1)))
+```
+
+```{code-cell} ipython3
+%time
+exptaylor(1,2)
+```
+
+```{code-cell} ipython3
+%time
+exptaylor(1,10)
+```
+
+c. Plot the relative error as a function of the Taylor series expansion order from first order upwards. (Hint: use method (4) in the comparison methods from the "Truncation and roundoff error accumulation in log-log plot" figure)
+
+```{code-cell} ipython3
+n_vals=np.array([1,2,3,4,5,6,7,8,9,10])
+for n in n_vals:
+    rel_er = (exptaylor(1,n)-np.exp(1))/np.exp(1)
+    plt.plot(n,rel_er, 'o')
+
+#plt.loglog(n, error,'o')
+plt.xlabel('Taylor series expansion order')
+plt.ylabel('relative error')
+plt.title('Truncation and roundoff error \naccumulation in log-log plot')
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
 ```
 
 ```{code-cell} ipython3
