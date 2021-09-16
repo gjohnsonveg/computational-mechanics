@@ -717,7 +717,7 @@ for i in range(len(t)):
     p_analytical[i] = 1.6e9*np.exp(k_g*(t[i]-1900))
     
 
-plt.plot(t,p_numerical,'o',label=str(n)+' Euler steps')
+plt.plot(t,p_numerical,'o', label=str(n)+' Euler steps')
 plt.plot(t,p_analytical,label='analytical')
 plt.title('Population from 1900-2020')
 plt.xlabel('year')
@@ -777,15 +777,25 @@ exptaylor(1,10)
 c. Plot the relative error as a function of the Taylor series expansion order from first order upwards. (Hint: use method (4) in the comparison methods from the "Truncation and roundoff error accumulation in log-log plot" figure)
 
 ```{code-cell} ipython3
-n_vals=np.array([1,2,3,4,5,6,7,8,9,10])
-for n in n_vals:
-    rel_er = (exptaylor(1,n)-np.exp(1))/np.exp(1)
-    plt.plot(n,rel_er, 'o')
+n = np.arange(31)
+N = len(n)
+error = np.zeros(N, dtype = np.float32)    # initialize an N-valued array of relative errors
 
-#plt.loglog(n, error,'o')
+for i in range(0,N):
+    ex_t = exptaylor(1, n[i])
+    np_exp = np.exp(1)
+    error[i] = (ex_t-np_exp)/np_exp #calculate relative error
+```
+
+```{code-cell} ipython3
+plt.plot(n, error)
 plt.xlabel('Taylor series expansion order')
 plt.ylabel('relative error')
 plt.title('Truncation and roundoff error \naccumulation in log-log plot')
+```
+
+```{code-cell} ipython3
+
 ```
 
 ```{code-cell} ipython3
