@@ -218,8 +218,12 @@ Therefore, you need to be explicit about the division by $N-1$ when calling `np.
 For example, to compute the sample variance for your `abv` variable, you do:
 
 ```{code-cell} ipython3
+<<<<<<< HEAD
 var_abv = np.var(abv)
 print(var_abv)
+=======
+var_abv = np.var(abv, ddof = 1)
+>>>>>>> 292a9463c21e323330b44da3042c4e4327d49c00
 ```
 
 Now, you can compute the standard deviation by taking the square root of `var_abv`:
@@ -605,6 +609,7 @@ our dataset by removing rows that do not include the IBU measure.
     scatter plot with `beers_filled`. What differences do you notice between the plots?
 
 ```{code-cell} ipython3
+<<<<<<< HEAD
 beers_filled = beers.fillna(0)
 
 ibu = beers_filled['ibu'].values
@@ -622,6 +627,9 @@ ax = style_means.plot.scatter(figsize=(10,10),
 for i, txt in enumerate(list(style_counts.index.values)):
     if style_counts.values[i] > 65:
         ax.annotate(txt, (style_means.abv.iloc[i],style_means.ibu.iloc[i]), fontsize=12)
+=======
+
+>>>>>>> 292a9463c21e323330b44da3042c4e4327d49c00
 ```
 
 2. Gordon Moore created an empirical prediction that the rate of
