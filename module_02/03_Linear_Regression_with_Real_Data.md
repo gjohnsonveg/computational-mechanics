@@ -5,9 +5,9 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.10.3
+    jupytext_version: 1.11.4
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -63,7 +63,7 @@ import numpy as np
 import pandas as pd
 ```
 
-To load our data from the file, you'll use the function [`numpy.loadtxt()`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html), which lets us immediately save the data into NumPy arrays. (We encourage you to read the documentation for details on how the function works.) Here, you'll save the data into the arrays `year` and `temp_anomaly`. 
+To load our data from the file, you'll use the function [`numpy.loadtxt()`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html), which lets us immediately save the data into NumPy arrays. (We encourage you to read the documentation for details on how the function works.) Here, you'll save the data into the arrays `year` and `temp_anomaly`.
 
 ```{code-cell} ipython3
 fname = '../data/land_global_temperature_anomaly-1880-2016.csv'
@@ -116,7 +116,7 @@ $$
 The notation above means that $f$ is a function of $x$, with $m+1$ variable parameters $a_0, a_1, ... , a_m$, where $m < n$. You need to choose the form of $f(x)$ _a priori_, by inspecting the experimental data and knowing something about the phenomenon you've measured. Thus, curve fitting consists of two steps: 
 
 1. Choosing the form of $f(x)$.
-2. Computing the parameters that will give us the "best fit" to the data. 
+2. Computing the parameters that will give us the "best fit" to the data.
 
 +++
 
@@ -148,7 +148,7 @@ $$
 \end{equation*}~~~~~~(3)
 $$
 
-which results in equations (2) being linear. In the case that the fitting function is polynomial, you have have $f_0(x) = 1, \; f_1(x) = x, \; f_2(x) = x^2$, and so on.  
+which results in equations (2) being linear. In the case that the fitting function is polynomial, you have have $f_0(x) = 1, \; f_1(x) = x, \; f_2(x) = x^2$, and so on.
 
 +++
 
@@ -277,7 +277,7 @@ In our case, the `x`-data corresponds to `Year`, and the `y`-data is `Value`. To
 
 It is good coding practice to *avoid repeating* ourselves: you want to write code that is reusable, not only because it leads to less typing but also because it reduces errors. If you find yourself doing the same calculation multiple times, it's better to encapsulate it into a *function*. 
 
-Remember the _key concept_ from [02_Working_with_Python](../module_01/02_Working_with_Python): A function is a compact collection of code that executes some action on its arguments. 
+Remember the _key concept_ from [02_Working_with_Python](../module_01/02_Working_with_Python): A function is a compact collection of code that executes some action on its arguments.
 
 +++
 
@@ -303,14 +303,13 @@ Our coefficients are:
 
 $$
     a_1 = \frac{ \sum_{i=0}^{n} y_{i} (x_i - \bar{x})}{\sum_{i=0}^{n} x_i (x_i - \bar{x})} \quad , \quad a_0  = \bar{y} - a_1\bar{x}
-$$ 
+$$
 
 +++
 
 We already calculated the mean values of the data arrays, but the formula requires two sums over new derived arrays. Guess what, NumPy has a built-in function for that: [`numpy.sum()`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.sum.html). Study the code below.
 
 ```{code-cell} ipython3
-
 xi = temp_data['Year'].values
 yi = temp_data['Value'].values
 
@@ -381,7 +380,7 @@ Let's call `reg` the array obtined from evaluating $f(x_i)$ for all years.
 reg = a_0 + a_1 * xi
 ```
 
-With the values of our linear regression, you can plot it on top of the original data to see how they look together. Study the code below. 
+With the values of our linear regression, you can plot it on top of the original data to see how they look together. Study the code below.
 
 ```{code-cell} ipython3
 plt.figure(figsize=(10, 5))
@@ -429,13 +428,13 @@ The assignment `f_linear = np.poly1d((a_1n,a_0n))` creates a 1D polynomial. This
 f_linear = lambda x: a_1n*x + a_0n
 ```
 
-In the line of code given above, you create the same assignment for `f_linear(x)`. One benefit of writing this out yourself is that you can see how each input is used directly. 
+In the line of code given above, you create the same assignment for `f_linear(x)`. One benefit of writing this out yourself is that you can see how each input is used directly.
 
 +++
 
 ## Exercise
 
-Use the `lambda` function to assign `f_linear` to our 1D polynomial instead of the `np.poly1d` assignment. 
+Use the `lambda` function to assign `f_linear` to our 1D polynomial instead of the `np.poly1d` assignment.
 
 ```{code-cell} ipython3
 f_linear = lambda x: a_1n*x+a_0n
@@ -460,7 +459,7 @@ If you look at the plot above, you might notice that around 1970 the temperature
 
 What if you break the data in two (before and after 1970) and do a linear regression in each segment? 
 
-To do that, you first need to find the position in our `year` array where the year 1970 is located. Thankfully, NumPy has a function called  [`numpy.where()`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.where.html) that can help us. You pass a condition and `numpy.where()` tells us where in the array the condition is `True`. 
+To do that, you first need to find the position in our `year` array where the year 1970 is located. Thankfully, NumPy has a function called  [`numpy.where()`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.where.html) that can help us. You pass a condition and `numpy.where()` tells us where in the array the condition is `True`.
 
 ```{code-cell} ipython3
 np.where(xi==1970)
@@ -557,6 +556,20 @@ USA = energy[energy['Entity']=='United States']
 EUR = energy[energy['Entity']=='Europe']
 plt.plot(USA['Year'],USA['Primary Energy Consumption (terawatt-hours)'],'-o')
 plt.plot(EUR['Year'],EUR['Primary Energy Consumption (terawatt-hours)'],'-s')
+
+# First fit with NumPy, then name the coefficients obtained a_1n, a_0n:
+a_1ne, a_0ne = np.polyfit(USA['Year'], USA['Primary Energy Consumption (terawatt-hours)'], 1)
+f_linear_1 = np.poly1d((a_1ne, a_0ne)) 
+f_linear_1 = lambda x: a_1ne*x+a_0ne
+plt.plot(USA['Year'], f_linear_1(USA['Year']), 'c--', linewidth=2, label='Linear regression')
+
+a_1nu, a_0nu = np.polyfit(EUR['Year'], EUR['Primary Energy Consumption (terawatt-hours)'], 1)
+f_linear_2 = np.poly1d((a_1nu, a_0nu)) 
+f_linear_2 = lambda x: a_1nu*x+a_0nu
+plt.plot(USA['Year'], f_linear_2(EUR['Year']), 'r--', linewidth=2, label='Linear regression')
+
+print('y={:0.3}x+{:0.3}'.format(a_1ne, a_0ne))
+print('y={:0.3}x+{:0.3}'.format(a_1nu, a_0nu))
 ```
 
 ```{code-cell} ipython3
@@ -564,7 +577,7 @@ x=USA['Year'].values
 yUSA=USA['Primary Energy Consumption (terawatt-hours)'].values
 yEUR=EUR['Primary Energy Consumption (terawatt-hours)'].values
 
-isplit = np.where(x==1980)[0][0]
+isplit = np.where(x==1975)[0][0]
 
 x1 , yUSA1, yEUR1 = x[0:isplit], yUSA[0:isplit], yEUR[0:isplit]
 x2 , yUSA2, yEUR2 = x[isplit:], yUSA[isplit:], yEUR[isplit:]
@@ -590,6 +603,12 @@ plt.xlabel('Year')
 plt.ylabel('Energy Consumption (TW-hrs)')
 plt.title('Regression of Energy use in USA and EUR\nBefore/After 1980')
 plt.legend();
+
+#print('y={:.4}x+{:.4}'.format(mUSA2, bUSA2))
+#print('y={:.4}x+{:.4}'.format(mEUR2, bEUR2))
+
+print('c. It seems like splitting the data around 1975 produces best fit lines that demonstrate the change in consumption.')
+print('d. Predicted USA energy use in 2025 is {:.4} TW-hrs, Predicted USA energy use in 2025 is {:.4} TW-hrs.'.format(mUSA2*2025+bUSA2, mEUR2*2025+bEUR2))
 ```
 
 2. You plotted Gordon Moore's empirical prediction that the rate of semiconductors on a computer chip would double every two years in [02_Seeing_Stats](./02_Seeing_Stats). This prediction was known as Moore's law. Gordon Moore had originally only expected this empirical relation to hold from 1965 - 1975 [[1](https://en.wikipedia.org/wiki/Moore%27s_law),[2](https://spectrum.ieee.org/computing/hardware/gordon-moore-the-man-whose-name-means-progress)], but semiconductor manufacuturers were able to keep up with Moore's law until 2015. 
@@ -618,8 +637,32 @@ $y_i=$ as `np.log(dataframe['MOS transistor count'].values)`
 
 a. Plot your function on the semilog y-axis scatter plot
 
+
 b. What are the values of constants $A$ and $B$ for our Moore's law fit? How does this compare to Gordon Moore's prediction that MOS transistor count doubles every two years?
 
+```{code-cell} ipython3
+from matplotlib import cm
+colors = cm.viridis(designers_counts.values)
+
+!head ../data/transistor_data.csv
+transistor_data = pd.read_csv('../data/transistor_data.csv')
+transistors_filled = transistor_data.fillna(0)
+
+MOS = transistors_filled['MOS transistor count'].values
+Dates = transistors_filled['Date of Introduction'].values
+transistors_designers = transistors_filled.drop(['Processor','MOSprocess','Area'], axis=1)
+designers_counts = transistors_designers['Designer'].value_counts()
+designers_means = transistors_designers.groupby('Designer').mean()
+designers_counts = designers_counts.sort_index()
+
+ax = designers_means.plot.scatter(figsize=(10,10), 
+                              x='Date of Introduction', y='MOS transistor count', s=designers_counts*40, c=colors,
+                              title='Date of Introduction vs. MOS transistor count mean values by Designer\n', alpha=0.3);
+
+#beers_styles = beers_clean.drop(['Unnamed: 0','name','brewery_id','ounces','id'], axis=1)
+#style_counts = beers_styles['style'].value_counts()
+#style_counts = style_counts.sort_index()
+```
 
 ```{code-cell} ipython3
 data = pd.read_csv('../data/transistor_data.csv')
@@ -636,4 +679,14 @@ plt.title('MOS transistor count of all Designers\nevery two years \nTransistor c
 plt.xlabel('year introduced')
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.5));
 plt.ylabel('# of transistors');
+```
+
+```{code-cell} ipython3
+print('a={}'.format(a))
+print('b={}'.format(b))
+print("Although a is only 0.34, this is a semilog y-axis scatter plot, so it is consistent with Moore's prediction")
+```
+
+```{code-cell} ipython3
+
 ```
