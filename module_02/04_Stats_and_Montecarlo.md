@@ -131,8 +131,8 @@ def montecarlopi(N):
     '''
     
 
-    x = rng.random(N,1);
-    y = rng.random(N,1);
+    x = rng.random(N);
+    y = rng.random(N);
     R=np.sqrt(x**2+y**2); # compute radius
     num_in_circle=sum(R<1);
     total_num_pts =len(R);
@@ -480,11 +480,46 @@ _Bonus: Can you do the work without any `for`-loops? Change the size of
 `dx` and `dy` to account for multiple particles._
 
 ```{code-cell} ipython3
-rng = default_rng()
-N_steps = 10
-dx = rng.random(N_steps) - 0.5
-dy = rng.random(N_steps) - 0.5
+N=1000
+x=rng.random(N)
+theta=rng.random(N)*2*np.pi
+x_count=0
 
+for i in range(N):
+    x_left=min(x[i]-np.cos(theta[i]), x[i]+np.cos(theta[i]))
+    x_right=max(x[i]-np.cos(theta[i]), x[i]+np.cos(theta[i]))
+    if np.logical_and(x_left<0, x_right>0):
+        x_count+=1
+
+result=x_count/N
+pi_result=2/result
+print('pi_result={}'.format(pi_result))
+```
+
+```{code-cell} ipython3
+N_steps = 10
+num_particles = 100
+len_count=0
+r_final = np.zeros((num_particles, 2))
+for i in range(0, num_particles):
+    dx = rng.random(N_steps) - 0.5
+    dy = rng.random(N_steps) - 0.5
+
+    r = np.zeros((N_steps, 2))
+
+    r[:, 0] = np.cumsum(dx)
+    r[:, 1] = np.cumsum(dy)
+    r_final[i, :] = r[-1, :]
+
+    plt.plot(r[:, 0 ], r[:, 1], alpha = 0.2)
+    '''
+    len=np.sqrt(r[:, 0 ]**2+r[:, 1]**2)
+    print('len[{}]={}'.format(i, len[i]))
+    if len[i]>0.5:
+        len_count+=1
+        print(len_count)
+    '''
+plt.plot(r_final[:, 0], r_final[:, 1], 'o', markersize = 10)
 ```
 
 __3.__ 100 steel rods are going to be used to support a 1000 kg structure. The
@@ -527,6 +562,38 @@ def montecarlo_buckle(E,r_mean,r_std,L,N=100):
     std_buckle_load: std dev buckling load of N rods under 1000*9.81/N-Newton load
     '''
     
-    return mean_buckle_load, std_buckle_load
+    r = rng.normal(loc=r_mean, scale=r_std, size=(N,))
+    Pcr=((np.pi**3)*E*(r**4))/(16*L**2)
+    #for i in r:
+        #P_cr=((np.pi**3)*E*(r**4))/(16*L**2)  
+    mean_buckle_load=np.mean(Pcr)
+    std_buckle_load=np.std(Pcr)
+    return mean_buckle_load, std_buckle_load, Pcr
 ```
 
+```{code-cell} ipython3
+L_val=2.5
+mP, sP, Pcr = montecarlo_buckle(200e9, 0.01, 0.001, L=L_val, N=100)
+plt.hist(Pcr)
+print('mean P={}'.format(mP))
+print('st dev P={}'.format(sP))
+#print(Pcr)
+
+Pcr_calc=((np.pi**3)*200e9*(0.01**4))/(16*L_val**2)
+print('Pcr_calc={}'.format(Pcr_calc))
+
+count=0
+for i in Pcr:
+    if i>=Pcr_calc:
+        count+=1
+
+print('count={}'.format(count))
+        
+percentage=count/N*100
+print('-----------')
+print('{}% of beams reach the critical buckling load'.format(percentage))
+```
+
+```{code-cell} ipython3
+
+```

@@ -5,9 +5,9 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.10.3
+    jupytext_version: 1.11.4
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -335,7 +335,7 @@ coords
 ```
 
 ```{code-cell} ipython3
-y_lines2 = np.array(coords)[:,1]
+y_lines2 = np.array(my_coords)[:,1]
 y_lines2
 ```
 
@@ -382,13 +382,42 @@ widgets.interact(catchclick, frame=selector);
 coords # view the pixel coordinates of the projectile
 ```
 
+```{code-cell} ipython3
+my_coords = [[297.1364942528736, 114.8879310344829],
+ [322.4238505747127, 117.18678160919546],
+ [347.71120689655174, 121.78448275862081],
+ [366.1020114942529, 124.08333333333348],
+ [391.389367816092, 130.9798850574714],
+ [414.37787356321843, 135.57758620689663],
+ [441.9640804597702, 147.07183908045988],
+ [464.95258620689657, 156.26724137931046],
+ [490.23994252873564, 167.76149425287372],
+ [508.6307471264368, 181.55459770114953],
+ [533.9181034482759, 195.34770114942535],
+ [559.2054597701151, 211.43965517241384],
+ [579.8951149425288, 227.53160919540244],
+ [602.8836206896553, 248.22126436781616],
+ [630.469827586207, 271.20977011494256],
+ [651.1594827586208, 294.19827586206907],
+ [674.1479885057472, 314.8879310344828],
+ [699.4353448275864, 347.0718390804599],
+ [720.1250000000001, 370.0603448275863],
+ [747.7112068965519, 395.34770114942535],
+ [770.6997126436783, 432.1293103448276],
+ [791.3893678160921, 462.014367816092],
+ [812.0790229885059, 496.4971264367816],
+ [839.6652298850577, 528.6810344827586],
+ [867.2514367816093, 565.4626436781609],
+ [887.9410919540231, 602.2442528735633]]
+```
+
 Now, convert the positions in pixels to meters, using your scaling for
 this video, and save the $x$ and $y$ coordinates to new arrays. Below,
 you plot the ball positions that you captured.
 
 ```{code-cell} ipython3
-x = np.array(coords)[:,0] *0.1 / gap_lines2.mean()
-y = np.array(coords)[:,1] *0.1 / gap_lines2.mean()
+x = np.array(my_coords)[:,0] *0.1 / gap_lines2.mean()
+y = np.array(my_coords)[:,1] *0.1 / gap_lines2.mean()
 ```
 
 ```{code-cell} ipython3
@@ -555,7 +584,64 @@ plt.plot(ay);
     d. Plot the polyfit lines for velocity and position (2 figures) with the finite difference velocity data points and positions. Which lines look like better e.g. which line fits the data?
 
 ```{code-cell} ipython3
+#npz_coords = np.load('projectile_coords.npz')
+#t = my_coords['t' ]
+#x = my_coords['x']
+#y = my_coords['y']
+```
 
+```{code-cell} ipython3
+delta_y = (y[1:] - y[0:-1])
+delta_x = (x[1:] - x[:-1])
+```
+
+```{code-cell} ipython3
+vy = delta_y * 60
+ay = (vy[1:] - vy[:-1]) * 60
+print('The acceleration in the y direction is: {:.2f}'.format(ay.mean()))
+```
+
+```{code-cell} ipython3
+delta_x = (x[1:] - x[:-1])
+vx = delta_x * 60
+ax = (vx[1:] - vx[:-1]) * 60
+print('The acceleration in the x direction is: {:.2f}'.format(ax.mean()))
+```
+
+```{code-cell} ipython3
+fig = plt.figure(figsize=(6,4))
+plt.plot(vx);
+plt.plot(vy);
+```
+
+```{code-cell} ipython3
+t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+print(len(t))
+print(len(vx))
+```
+
+```{code-cell} ipython3
+a_1n, a_0n = np.polyfit(t, vx, 1)
+
+f_linear = np.poly1d((a_1n, a_0n)) 
+```
+
+```{code-cell} ipython3
+f_linear = lambda x: a_1n*x+a_0n
+```
+
+```{code-cell} ipython3
+fig = plt.figure(figsize=(6,4))
+#plt.plot(t, vx, 's', linewidth=1, alpha=0.5)
+#plt.plot(t, f_linear(t), linewidth=2, label='Linear regression')
+
+plt.plot(t, vx,'s', color='#2929a3', linewidth=1, alpha=0.5)
+plt.plot(t, f_linear(t), 'k--', linewidth=2, label='Linear regression')
+
+#plt.plot(vy);
+
+#plt.plot(xi, yi,'s', color='#2929a3', linewidth=1, alpha=0.5,label='Measured anomoly') 
+#plt.plot(xi, reg, 'k--', linewidth=2, label='Linear regression')
 ```
 
 2. Not only can you measure acceleration of objects that you track, you can look at other physical constants like [coefficient of restitution](https://en.wikipedia.org/wiki/Coefficient_of_restitution), $e$ . 
@@ -573,5 +659,75 @@ plt.plot(ay);
      c. Calculate the $e$ for each of the three collisions
 
 ```{code-cell} ipython3
+t, y = np.loadtxt(filename, usecols=[0,1], unpack=True)
+```
 
+```{code-cell} ipython3
+fig = plt.figure(figsize=(6,4))
+plt.plot(t,y);
+```
+
+```{code-cell} ipython3
+np.where( y < 0 )[0]
+```
+
+```{code-cell} ipython3
+delta_y = (y[1:2057] - y[:2056]) 
+```
+
+```{code-cell} ipython3
+dt = t[1]-t[0]
+dt
+```
+
+```{code-cell} ipython3
+vy = delta_y / dt
+ay = (vy[1:] - vy[:-1]) / dt
+print('The acceleration in the y direction is: {:.2f}'.format(ay.mean()))
+```
+
+```{code-cell} ipython3
+fig = plt.figure(figsize=(6,4))
+plt.plot(vy);
+```
+
+```{code-cell} ipython3
+b4_bounce1 = (t[1:576], y[1:576])
+b4_bounce2 = (t[585:1420], y[585:1420])
+b4_bounce3 = (t[1429:2049], y[1429:2049])
+
+b4_bounce1_max=np.max(b4_bounce1[1])
+print('b4_bounce1_max={}'.format(b4_bounce1_max))
+b4_bounce2_max=np.max(b4_bounce2[1])
+print('b4_bounce2_max={}'.format(b4_bounce2_max))
+b4_bounce3_max=np.max(b4_bounce3[1])
+print('b4_bounce3_max={}'.format(b4_bounce3_max))
+```
+
+```{code-cell} ipython3
+bounce1_v = (t[571:590], vy[571:590])
+bounce2_v = (t[1415:1434], vy[1415:1434])
+bounce3_v = (t[2044:2062], vy[2044:2062])
+
+min_1 = np.min(bounce1_v[1])
+min_2 = np.min(bounce2_v[1])
+min_3 = np.min(bounce3_v[1])
+
+max_1 = np.max(bounce1_v[1])
+max_2 = np.max(bounce2_v[1])
+max_3 = np.max(bounce3_v[1])
+
+print('for bounce 1, the min vy is {:0.3}, and the max is {:0.3}'.format(min_1, max_1))
+print('for bounce 2, the min vy is {:0.3}, and the max is {:0.3}'.format(min_2, max_2))
+print('for bounce 3, the min vy is {:0.3}, and the max is {:0.3}'.format(min_3, max_3))
+```
+
+```{code-cell} ipython3
+#e=-vy'/vy
+e_1=-max_1/min_1
+e_2=-max_2/min_2
+e_3=-max_3/min_3
+print('coeff of restitution for bounce 1 = {:0.3}'.format(e_1))
+print('coeff of restitution for bounce 2 = {:0.3}'.format(e_2))
+print('coeff of restitution for bounce 3 = {:0.3}'.format(e_3))
 ```
